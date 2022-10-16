@@ -12,7 +12,7 @@ export default function Button({
   type = "normal",
 }: ButtonProps) {
   const cls = classNames({
-    [className || ""]: className,
+    [className as string]: !!className,
     "ant-btn": true,
     [`ant-button-${type}`]: type,
   });
