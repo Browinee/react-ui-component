@@ -36,7 +36,6 @@ const lowCase = str => str.replace(/[A-Z]/g, m => `-${m.toLowerCase()}`).replace
 
 
         await fs.writeFile(newPath, result);
-
         console.log(chalk.green(`write ${newPath} success`));
     }))
 
