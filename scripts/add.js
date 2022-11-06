@@ -19,7 +19,8 @@ const lowCase = str => str.replace(/[A-Z]/g, m => `-${m.toLowerCase()}`).replace
 
     const dirName = lowCase(component);
     const componentName = varCase(component);
-
+    console.log("componnet", component);
+    console.log("componentName", componentName);
     spawn('mkdir', ['-p', path.join(process.cwd(), `src/${dirName}`)]);
     const tplFiles = glob.sync(path.join(__dirname, 'template/*.hbs'));
     tplFiles.forEach((async filePath => {

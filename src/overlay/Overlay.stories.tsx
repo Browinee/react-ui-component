@@ -37,7 +37,7 @@ export const Controlled = () => {
   const [visible, setVisible] = useState(true);
   return (
     <>
-      <Overlay visible={visible} onVisibleChange={(v) => setVisible(v)}>
+      <Overlay visible={visible} onVisibleChange={(v: any) => setVisible(v)}>
         <div style={{ border: "1px solid", width: "300px", height: "300px" }}>
           Controlled Overlay
         </div>

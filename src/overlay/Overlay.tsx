@@ -29,7 +29,7 @@ const Overlay = (props: overlayProps) => {
       setVisible(propVisible);
     }
   }, [propVisible]);
-  const handleMouseDown = (e) => {
+  const handleMouseDown = () => {
     onVisibleChange?.(false);
   };
   useEffect(() => {
