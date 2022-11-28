@@ -1,30 +1,30 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import Input from './index';
+import Radio from './index';
 
-describe('Input', () => {
-  test('renders Input', () => {
-    render(<Input>click me</Input>);
+describe('Radio', () => {
+  test('renders Radio', () => {
+    render(<Radio>click me</Radio>);
     const linkElement = screen.getByText(/click me/i);
     expect(linkElement).toBeInTheDocument();
   });
 
 /**
-  test('renders normal Input', () => {
-    const { container } = render(<Input>click me</Input>);
+  test('renders normal Radio', () => {
+    const { container } = render(<Radio>click me</Radio>);
 
     expect(container.querySelector('.ant-btn-normal')).toBeInTheDocument();
   });
 
-  test('renders small Input', () => {
-    const { container } = render(<Input size="small">click me</Input>);
+  test('renders small Radio', () => {
+    const { container } = render(<Radio size="small">click me</Radio>);
 
     expect(container.querySelector('.ant-btn-small')).toBeInTheDocument();
   });
 
   test('should support click', () => {
     const onClick = jest.fn();
-    render(<Input type="primary" onClick={onClick}>click me</Input>);
+    render(<Radio type="primary" onClick={onClick}>click me</Radio>);
 
     const linkElement = screen.getByText(/click me/i);
     fireEvent.click(linkElement);
