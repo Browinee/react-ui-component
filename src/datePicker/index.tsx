@@ -44,8 +44,7 @@ const InternalDatepicker: React.ForwardRefRenderFunction<
     return new Date(year, month, 1).getDay();
   };
   const clickHandler = (e: React.MouseEvent<HTMLElement>) => {
-    console.log("e", e.currentTarget);
-    const value = e.currentTarget.value;
+    const value = (e.target as HTMLElement).textContent;
     onChange && onChange(new Date(date.getFullYear(), date.getMonth(), value));
   };
   const renderDates = () => {
