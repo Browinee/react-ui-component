@@ -1,8 +1,33 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useImperativeHandle, useState } from "react";
 import "./index.css";
 
-function Datepicker() {
-  const [date, setDate] = useState(new Date());
+interface DatepickerProps {
+  value?: Date;
+  onChange?: (date: Date) => void;
+}
+export interface DatepickerRef {
+  getDate: () => Date;
+  setDate: (date: Date) => void;
+}
+const InternalDatepicker: React.ForwardRefRenderFunction<
+  DatepickerRef,
+  DatepickerProps
+> = (props, ref) => {
+  const { value = new Date(), onChange } = props;
+
+  const [date, setDate] = useState(value);
+
+  useImperativeHandle(ref, () => {
+    return {
+      getDate() {
+        return date;
+      },
+      setDate(date: Date) {
+        setDate(date);
+      },
+    };
+  });
+
   const prevMonthHander = useCallback(() => {
     setDate(new Date(date.getFullYear(), date.getMonth() - 1, 1));
   }, [setDate, date]);
@@ -10,6 +35,48 @@ function Datepicker() {
   const nextMonthHandler = useCallback(() => {
     setDate(new Date(date.getFullYear(), date.getMonth() + 1, 1));
   }, [setDate, date]);
+
+  const daysOfMonth = useCallback((year: number, month: number) => {
+    return new Date(year, month + 1, 0).getDate();
+  }, []);
+  // 星期幾
+  const firstDayOfMonth = (year: number, month: number) => {
+    return new Date(year, month, 1).getDay();
+  };
+  const clickHandler = (e: React.MouseEvent<HTMLElement>) => {
+    console.log("e", e.currentTarget);
+    const value = e.currentTarget.value;
+    onChange && onChange(new Date(date.getFullYear(), date.getMonth(), value));
+  };
+  const renderDates = () => {
+    const days = [];
+    const daysCount = daysOfMonth(date.getFullYear(), date.getMonth());
+    const firstDay = firstDayOfMonth(date.getFullYear(), date.getMonth());
+    // firstDay 6：星期六 前面會有日～五個empty
+    for (let i = 0; i < firstDay; i++) {
+      days.push(<div key={`empty-${i}`} className="empty"></div>);
+    }
+    for (let i = 1; i <= daysCount; i++) {
+      // const clickHandler = onChange?.bind(
+      //   null,
+      //   new Date(date.getFullYear(), date.getMonth(), i)
+      // );
+      if (i === date.getDate()) {
+        days.push(
+          <div key={i} className="day selected" onClick={clickHandler}>
+            {i}
+          </div>
+        );
+      } else {
+        days.push(
+          <div key={i} className="day" onClick={clickHandler}>
+            {i}
+          </div>
+        );
+      }
+    }
+    return days;
+  };
   return (
     <div className="calendar">
       <div className="header">
@@ -26,43 +93,14 @@ function Datepicker() {
         <div className="day">三</div>
         <div className="day">四</div>
         <div className="day">五</div>
-        <div className="day">六</div>
-        <div className="empty"></div>
-        <div className="empty"></div>
-        <div className="day">1</div>
-        <div className="day">2</div>
-        <div className="day">3</div>
-        <div className="day">4</div>
-        <div className="day">5</div>
-        <div className="day">6</div>
-        <div className="day">7</div>
-        <div className="day">8</div>
-        <div className="day">9</div>
-        <div className="day">10</div>
-        <div className="day">11</div>
-        <div className="day">12</div>
-        <div className="day">13</div>
-        <div className="day">14</div>
-        <div className="day">15</div>
-        <div className="day">16</div>
-        <div className="day">17</div>
-        <div className="day">18</div>
-        <div className="day">19</div>
-        <div className="day">20</div>
-        <div className="day">21</div>
-        <div className="day">22</div>
-        <div className="day">23</div>
-        <div className="day">24</div>
-        <div className="day">25</div>
-        <div className="day">26</div>
-        <div className="day">27</div>
-        <div className="day">28</div>
-        <div className="day">29</div>
-        <div className="day">30</div>
-        <div className="day">31</div>
+        <div className="day" onClick={() => {}}>
+          六
+        </div>
+        {renderDates()}
       </div>
     </div>
   );
-}
+};
 
+const Datepicker = React.forwardRef(InternalDatepicker);
 export default Datepicker;
