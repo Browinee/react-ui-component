@@ -10,3 +10,7 @@
   height: 300px;
   border: 1px solid #000;
 }
+.dragging {
+  border: 5px dashed #000;
+  box-sizing: border-box;
+}

@@ -1,42 +1,69 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import "./index.css";
 import { useDrag, useDrop, DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
+interface ItemType {
+  color: string;
+}
+interface BoxProps {
+  color: string;
+}
 
-function Box() {
+function Box(props: BoxProps) {
   const ref = useRef(null);
-  const [, drag] = useDrag({
+  const [dragProps, drag] = useDrag({
     type: "box",
     item: {
-      color: "blue",
+      color: props.color,
+    },
+    collect(monitor) {
+      return {
+        dragging: monitor.isDragging(),
+      };
     },
   });
 
   drag(ref);
-  return <div ref={ref} className="box"></div>;
+  return (
+    <div
+      ref={ref}
+      className={dragProps.dragging ? "box dragging" : "box"}
+      style={{ background: props.color || "blue" }}
+    ></div>
+  );
 }
 
 function Container() {
+  const [boxes, setBoxes] = useState<ItemType[]>([]);
+
   const ref = useRef(null);
 
   const [, drop] = useDrop(() => {
     return {
       accept: "box",
       drop(item: any) {
-        console.log(item);
+        setBoxes((boxes) => [...boxes, item]);
       },
     };
   });
   drop(ref);
 
-  return <div ref={ref} className="container"></div>;
+  return (
+    <div ref={ref} className="container">
+      {boxes.map((item) => {
+        return <Box key={item.color} color={item.color}></Box>;
+      })}
+    </div>
+  );
 }
 
 function App() {
   return (
     <div>
       <Container></Container>
-      <Box></Box>
+      <Box color="blue"></Box>
+      <Box color="red"></Box>
+      <Box color="green"></Box>
     </div>
   );
 }
