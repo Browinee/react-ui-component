@@ -14,3 +14,6 @@
   border: 5px dashed #000;
   box-sizing: border-box;
 }
+.drag-layer {
+  position: fixed;
+}
