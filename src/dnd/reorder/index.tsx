@@ -7,19 +7,25 @@ import { useDrag, useDrop } from "react-dnd";
 function Card(props: CardProps) {
   const { data, index, swapIndex } = props;
   const ref = useRef(null);
-  const [, drag] = useDrag({
+  const [{ dragging }, drag] = useDrag({
     type: "card",
     item: {
       id: data.id,
       index,
     },
+    collect(monitor) {
+      return {
+        dragging: monitor.isDragging(),
+      };
+    },
   });
 
   const [, drop] = useDrop({
     accept: "card",
-    drop(item: DragData) {
+    hover(item: DragData) {
       swapIndex(item.index, index);
-      console.log({ from: item, to: data });
+      item.index = index;
+      // console.log({ from: item, to: data });
     },
   });
 
@@ -29,7 +35,7 @@ function Card(props: CardProps) {
   }, []);
 
   return (
-    <div ref={ref} className="card">
+    <div ref={ref} className={dragging ? "card dragging" : "card"}>
       {data.content}
     </div>
   );
@@ -44,7 +50,7 @@ function App() {
   }, []);
 
   return (
-    <div className="card-list">
+    <div>
       {cardList.map((item: CardItem, index: number) => (
         <Card
           data={item}
