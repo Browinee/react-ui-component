@@ -1,4 +1,4 @@
-import { Fragment, useRef, useState } from "react";
+import { Fragment, useCallback, useRef, useState } from "react";
 import "./index.css";
 import { INITIAL_LAYOUT } from "./constant";
 import Ccc from "./Ccc";
@@ -6,6 +6,7 @@ import Aaa from "./Aaa";
 import Bbb from "./Bbb";
 import { useDrag } from "react-dnd";
 import DropZone from "./DropZone";
+import React from "react";
 
 const registeredComponent: Record<string, any> = {
   aaa: Aaa,
@@ -79,7 +80,10 @@ function Column(columnProps: ColumnProps) {
       {children?.map((item, index) => {
         return (
           <Fragment key={`comp_id_${item.id}`}>
-            <DropZone className="drop-zone-horizontal"></DropZone>
+            <DropZone
+              path={`${currentPath}-${index}`}
+              className="drop-zone-horizontal"
+            ></DropZone>
             <Component
               data={item}
               rowIndex={rowIndex}
@@ -89,7 +93,10 @@ function Column(columnProps: ColumnProps) {
           </Fragment>
         );
       })}
-      <DropZone className="drop-zone-horizontal"></DropZone>
+      <DropZone
+        path={`${currentPath}-${children?.length}`}
+        className="drop-zone-horizontal"
+      ></DropZone>
     </div>
   );
 }
@@ -130,7 +137,10 @@ function Row(rowProps: RowProps) {
           </Fragment>
         );
       })}
-      <DropZone className="drop-zone-horizontal"></DropZone>
+      <DropZone
+        path={`${currentPath}-${children?.length}`}
+        className="drop-zone-horizontal"
+      ></DropZone>
     </div>
   );
 }
@@ -152,29 +162,43 @@ function BarItem(props: BarItemProps) {
   );
 }
 
+type ContextType = { swapPosition: Function };
+export const LayoutContext = React.createContext<ContextType>({
+  swapPosition: () => {},
+});
+
 function App() {
   const [layout, setLayout] = useState<LayoutItem[]>(INITIAL_LAYOUT);
-
+  // NOTE: here just provide some usecase:
+  // 1-0-0 to 0-1-1
+  const swapPosition = useCallback((item: any, path: string) => {
+    console.log(item, path);
+  }, []);
   return (
-    <div className="">
-      {layout.map((item, index) => {
-        return (
-          <Fragment key={`row_id_${item.id}`}>
-            <DropZone path={index} className="drop-zone-horizontal"></DropZone>
-            <Row data={item} rowIndex={index}></Row>
-          </Fragment>
-        );
-      })}
-      <DropZone
-        className="drop-zone-horizontal"
-        path={layout.length}
-      ></DropZone>
-      <div className="bottomBar">
-        <BarItem type="aaa"></BarItem>
-        <BarItem type="bbb"></BarItem>
-        <BarItem type="ccc"></BarItem>
+    <LayoutContext.Provider value={{ swapPosition }}>
+      <div className="">
+        {layout.map((item, index) => {
+          return (
+            <Fragment key={`row_id_${item.id}`}>
+              <DropZone
+                path={`${index}`}
+                className="drop-zone-horizontal"
+              ></DropZone>
+              <Row data={item} rowIndex={index}></Row>
+            </Fragment>
+          );
+        })}
+        <DropZone
+          className="drop-zone-horizontal"
+          path={`${layout.length}`}
+        ></DropZone>
+        <div className="bottomBar">
+          <BarItem type="aaa"></BarItem>
+          <BarItem type="bbb"></BarItem>
+          <BarItem type="ccc"></BarItem>
+        </div>
       </div>
-    </div>
+    </LayoutContext.Provider>
   );
 }
 export default App;
