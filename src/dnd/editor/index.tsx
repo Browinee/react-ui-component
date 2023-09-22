@@ -24,13 +24,27 @@ interface LayoutItem {
 
 interface ComponentProps {
   data: LayoutItem;
+  rowIndex: number;
+  columnIndex: number;
+  compIndex: number;
 }
 function Component(compProps: ComponentProps) {
-  const { component } = compProps.data;
+  const {
+    data: { component },
+    rowIndex,
+    columnIndex,
+    compIndex,
+  } = compProps;
   const Comp = registeredComponent[component!.type];
+  const currentPath = `${rowIndex}-${columnIndex}-${compIndex}`;
+
   const [, drag] = useDrag({
     type: "component",
-    item: compProps,
+    item: {
+      type: "component",
+      path: currentPath,
+      data: compProps.data,
+    },
   });
   return (
     <div ref={drag} className="component">
@@ -41,22 +55,37 @@ function Component(compProps: ComponentProps) {
 
 interface ColumnProps {
   data: LayoutItem;
+  rowIndex: number;
+  columnIndex: number;
 }
 
 function Column(columnProps: ColumnProps) {
-  const { children } = columnProps.data;
+  const {
+    data: { children },
+    rowIndex,
+    columnIndex,
+  } = columnProps;
+  const currentPath = `${rowIndex}-${columnIndex}`;
   const [, drag] = useDrag({
     type: "column",
-    item: columnProps,
+    item: {
+      type: "column",
+      path: currentPath,
+      data: columnProps.data,
+    },
   });
-
   return (
     <div ref={drag} className="column">
-      {children?.map((item) => {
+      {children?.map((item, index) => {
         return (
           <Fragment key={`comp_id_${item.id}`}>
             <DropZone className="drop-zone-horizontal"></DropZone>
-            <Component data={item}></Component>
+            <Component
+              data={item}
+              rowIndex={rowIndex}
+              columnIndex={columnIndex}
+              compIndex={index}
+            ></Component>
           </Fragment>
         );
       })}
@@ -67,16 +96,34 @@ function Column(columnProps: ColumnProps) {
 
 interface RowProps {
   data: LayoutItem;
+  rowIndex: number;
 }
 function Row(rowProps: RowProps) {
-  const { children } = rowProps.data;
+  const {
+    data: { children },
+    rowIndex,
+  } = rowProps;
+  const currentPath = rowIndex + "";
+  const [, drap] = useDrag({
+    type: "row",
+    item: {
+      path: currentPath,
+      type: "row",
+      data: rowProps.data,
+    },
+  });
   return (
     <div className="row">
-      {children?.map((item) => {
+      {children?.map((item, index) => {
         return (
           <Fragment key={`col_id_${item.id}`}>
             <DropZone className="drop-zone-horizontal"></DropZone>
-            <Column key={`col_id_${item.id}`} data={item}></Column>
+            <Column
+              key={`col_id_${item.id}`}
+              data={item}
+              rowIndex={rowIndex}
+              columnIndex={index}
+            ></Column>
           </Fragment>
         );
       })}
@@ -107,11 +154,11 @@ function App() {
 
   return (
     <div className="">
-      {layout.map((item) => {
+      {layout.map((item, index) => {
         return (
           <Fragment key={`row_id_${item.id}`}>
             <DropZone className="drop-zone-horizontal"></DropZone>
-            <Row data={item}></Row>
+            <Row data={item} rowIndex={index}></Row>
           </Fragment>
         );
       })}
