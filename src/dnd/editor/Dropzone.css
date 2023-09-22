@@ -1,0 +1,11 @@
+.drop-zone {
+}
+.drop-zone-horizontal {
+  height: 20px;
+}
+.drop-zone-vertical {
+  width: 20px;
+}
+.drop-zone.focus {
+  background: blue;
+}

@@ -1,24 +1,11 @@
-import { useState } from "react";
+import { Fragment, useRef, useState } from "react";
 import "./index.css";
 import { INITIAL_LAYOUT } from "./constant";
-
-function Aaa() {
-  return <button>aaa</button>;
-}
-function Bbb() {
-  return (
-    <img
-      alt="Doraemon"
-      width="50"
-      height="50"
-      src="https://img0.baidu.com/it/u=3610760552,2286123102&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500"
-    />
-  );
-}
-
-function Ccc() {
-  return <input type="range"></input>;
-}
+import Ccc from "./Ccc";
+import Aaa from "./Aaa";
+import Bbb from "./Bbb";
+import { useDrag } from "react-dnd";
+import DropZone from "./DropZone";
 
 const registeredComponent: Record<string, any> = {
   aaa: Aaa,
@@ -41,9 +28,12 @@ interface ComponentProps {
 function Component(compProps: ComponentProps) {
   const { component } = compProps.data;
   const Comp = registeredComponent[component!.type];
-
+  const [, drag] = useDrag({
+    type: "component",
+    item: compProps,
+  });
   return (
-    <div className="component">
+    <div ref={drag} className="component">
       <Comp></Comp>
     </div>
   );
@@ -55,12 +45,22 @@ interface ColumnProps {
 
 function Column(columnProps: ColumnProps) {
   const { children } = columnProps.data;
+  const [, drag] = useDrag({
+    type: "column",
+    item: columnProps,
+  });
 
   return (
-    <div className="column">
+    <div ref={drag} className="column">
       {children?.map((item) => {
-        return <Component key={`comp_id_${item.id}`} data={item}></Component>;
+        return (
+          <Fragment key={`comp_id_${item.id}`}>
+            <DropZone className="drop-zone-horizontal"></DropZone>
+            <Component data={item}></Component>
+          </Fragment>
+        );
       })}
+      <DropZone className="drop-zone-horizontal"></DropZone>
     </div>
   );
 }
@@ -73,8 +73,14 @@ function Row(rowProps: RowProps) {
   return (
     <div className="row">
       {children?.map((item) => {
-        return <Column key={`col_id_${item.id}`} data={item}></Column>;
+        return (
+          <Fragment key={`col_id_${item.id}`}>
+            <DropZone className="drop-zone-horizontal"></DropZone>
+            <Column key={`col_id_${item.id}`} data={item}></Column>
+          </Fragment>
+        );
       })}
+      <DropZone className="drop-zone-horizontal"></DropZone>
     </div>
   );
 }
@@ -84,9 +90,13 @@ interface BarItemProps {
 }
 function BarItem(props: BarItemProps) {
   const Comp = registeredComponent[props.type];
-
+  const [, drag] = useDrag({
+    type: "barItem",
+    item: props,
+  });
+  const ref = useRef(null);
   return (
-    <div className="bar-item">
+    <div ref={drag} className="bar-item">
       <Comp></Comp>
     </div>
   );
@@ -98,8 +108,14 @@ function App() {
   return (
     <div className="">
       {layout.map((item) => {
-        return <Row key={`row_id_${item.id}`} data={item}></Row>;
+        return (
+          <Fragment key={`row_id_${item.id}`}>
+            <DropZone className="drop-zone-horizontal"></DropZone>
+            <Row data={item}></Row>
+          </Fragment>
+        );
       })}
+      <DropZone className="drop-zone-horizontal"></DropZone>
       <div className="bottomBar">
         <BarItem type="aaa"></BarItem>
         <BarItem type="bbb"></BarItem>
