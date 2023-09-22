@@ -117,7 +117,10 @@ function Row(rowProps: RowProps) {
       {children?.map((item, index) => {
         return (
           <Fragment key={`col_id_${item.id}`}>
-            <DropZone className="drop-zone-horizontal"></DropZone>
+            <DropZone
+              path={`${currentPath}-${index}`}
+              className="drop-zone-horizontal"
+            ></DropZone>
             <Column
               key={`col_id_${item.id}`}
               data={item}
@@ -157,12 +160,15 @@ function App() {
       {layout.map((item, index) => {
         return (
           <Fragment key={`row_id_${item.id}`}>
-            <DropZone className="drop-zone-horizontal"></DropZone>
+            <DropZone path={index} className="drop-zone-horizontal"></DropZone>
             <Row data={item} rowIndex={index}></Row>
           </Fragment>
         );
       })}
-      <DropZone className="drop-zone-horizontal"></DropZone>
+      <DropZone
+        className="drop-zone-horizontal"
+        path={layout.length}
+      ></DropZone>
       <div className="bottomBar">
         <BarItem type="aaa"></BarItem>
         <BarItem type="bbb"></BarItem>

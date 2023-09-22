@@ -2,6 +2,7 @@ import { useDrop } from "react-dnd";
 import "./Dropzone.css";
 interface DropZoneProps {
   className: string;
+  path: string;
 }
 function DropZone(props: DropZoneProps) {
   const [{ overing }, drop] = useDrop({
