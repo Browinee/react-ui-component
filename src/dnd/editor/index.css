@@ -1,0 +1,26 @@
+.row {
+  padding: 10px;
+  border: 1px solid #000;
+  display: flex;
+}
+.column {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid blue;
+}
+.column:not(:last-child) {
+  margin-right: 10px;
+}
+.component {
+  height: 60px;
+  margin: 10px;
+  border: 1px dashed #000;
+}
+.bottomBar {
+  border: 1px solid #000;
+  display: flex;
+}
+.bottomBar .bar-item {
+  border: 1px solid blue;
+  margin: 10px;
+}
