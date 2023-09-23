@@ -1,8 +1,16 @@
-const ROW = "row";
-const COLUMN = "column";
-const COMPONENT = "component";
+export const ROW = "row";
+export const COLUMN = "column";
+export const COMPONENT = "component";
 
-export const INITIAL_LAYOUT = [
+interface ILayout {
+  type: string;
+  id: string;
+  children?: ILayout[];
+  component?: {
+    type: string;
+  };
+}
+export const INITIAL_LAYOUT: ILayout[] = [
   {
     type: ROW,
     id: "row0",

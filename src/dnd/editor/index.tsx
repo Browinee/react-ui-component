@@ -1,6 +1,6 @@
 import { Fragment, useCallback, useRef, useState } from "react";
 import "./index.css";
-import { INITIAL_LAYOUT } from "./constant";
+import { COLUMN, COMPONENT, INITIAL_LAYOUT } from "./constant";
 import Ccc from "./Ccc";
 import Aaa from "./Aaa";
 import Bbb from "./Bbb";
@@ -126,7 +126,7 @@ function Row(rowProps: RowProps) {
           <Fragment key={`col_id_${item.id}`}>
             <DropZone
               path={`${currentPath}-${index}`}
-              className="drop-zone-horizontal"
+              className="drop-zone-vertical"
             ></DropZone>
             <Column
               key={`col_id_${item.id}`}
@@ -139,7 +139,7 @@ function Row(rowProps: RowProps) {
       })}
       <DropZone
         path={`${currentPath}-${children?.length}`}
-        className="drop-zone-horizontal"
+        className="drop-zone-vertical"
       ></DropZone>
     </div>
   );
@@ -169,10 +169,31 @@ export const LayoutContext = React.createContext<ContextType>({
 
 function App() {
   const [layout, setLayout] = useState<LayoutItem[]>(INITIAL_LAYOUT);
-  // NOTE: here just provide some usecase:
-  // 1-0-0 to 0-1-1
+
   const swapPosition = useCallback((item: any, path: string) => {
     console.log(item, path);
+    // NOTE: here just provide some usecase:
+    // case 1: 1-0-0 to 0-1-1
+    // layout[1].children[0].children.splice(0, 1);
+    // layout[0].children[1].children.splice(1, 0, item.data);
+    // setLayout([...layout]);
+
+    // case 2: 0-0-1 到 0-1
+    // layout[0].children[0].children.splice(1, 1);
+    // layout[0].children.splice(1, 0, {
+    //   type: COLUMN,
+    //   children: [item.data],
+    // });
+    // setLayout([...layout]);
+
+    // case 3: bottomBar to 1-0-2
+    layout[1].children[0].children.splice(2, 0, {
+      type: COMPONENT,
+      component: {
+        type: item.type,
+      },
+    });
+    setLayout([...layout]);
   }, []);
   return (
     <LayoutContext.Provider value={{ swapPosition }}>
