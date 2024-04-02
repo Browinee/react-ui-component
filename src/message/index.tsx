@@ -1,4 +1,7 @@
-import { CSSProperties, FC, ReactNode } from "react";
+import { CSSProperties, FC, ReactNode, useEffect } from "react";
+import useStore from "./useStore";
+import { CSSTransition, TransitionGroup } from "react-transition-group";
+import "./index.scss";
 
 export type Position = "top" | "bottom";
 
@@ -12,5 +15,38 @@ export interface MessageProps {
 }
 
 export const MessageProvider: FC<{}> = (props) => {
-  return <div></div>;
+  const { messageList, add, update, remove } = useStore("top");
+  useEffect(() => {
+    setInterval(() => {
+      add({
+        content: Math.random().toString().slice(2, 8),
+      });
+    }, 2000);
+  }, []);
+
+  const positions = Object.keys(messageList) as Position[];
+  return (
+    <div className="message-wrapper">
+      {positions.map((direction) => {
+        return (
+          <TransitionGroup
+            className={`message-wrapper-${direction}`}
+            key={direction}
+          >
+            {messageList[direction].map((item) => {
+              return (
+                <CSSTransition
+                  key={item.id}
+                  timeout={1000}
+                  classNames="message"
+                >
+                  <div className="message-item">{item.content}</div>
+                </CSSTransition>
+              );
+            })}
+          </TransitionGroup>
+        );
+      })}
+    </div>
+  );
 };

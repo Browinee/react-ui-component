@@ -10,7 +10,7 @@ const initialState = {
   top: [],
   bottom: [],
 };
-function useStore(defaultPosition: Position) {
+function useStore(defaultPosition: Position = "top") {
   const [messageList, setMessageList] = useState<MessageList>({
     ...initialState,
   });
