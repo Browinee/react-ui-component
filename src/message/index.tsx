@@ -1,7 +1,8 @@
-import { CSSProperties, FC, ReactNode, useEffect } from "react";
+import { CSSProperties, FC, ReactNode, useEffect, useMemo } from "react";
 import useStore from "./useStore";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import "./index.scss";
+import { createPortal } from "react-dom";
 
 export type Position = "top" | "bottom";
 
@@ -25,7 +26,7 @@ export const MessageProvider: FC<{}> = (props) => {
   }, []);
 
   const positions = Object.keys(messageList) as Position[];
-  return (
+  const messageWrapper = (
     <div className="message-wrapper">
       {positions.map((direction) => {
         return (
@@ -49,4 +50,14 @@ export const MessageProvider: FC<{}> = (props) => {
       })}
     </div>
   );
+
+  const el = useMemo(() => {
+    const el = document.createElement("div");
+    el.className = `wrapper`;
+
+    document.body.appendChild(el);
+    return el;
+  }, []);
+
+  return createPortal(messageWrapper, el);
 };
