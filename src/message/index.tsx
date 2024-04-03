@@ -3,6 +3,7 @@ import useStore from "./useStore";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import "./index.scss";
 import { createPortal } from "react-dom";
+import { useTimer } from "./useTimer";
 
 export type Position = "top" | "bottom";
 
@@ -13,8 +14,25 @@ export interface MessageProps {
   duration?: number;
   id?: number;
   position?: Position;
+  onClose?: (...args: any) => void;
 }
+const MessageItem: FC<MessageProps> = (item) => {
+  const { onMouseEnter, onMouseLeave } = useTimer({
+    id: item.id!,
+    duration: item.duration,
+    remove: item.onClose!,
+  });
 
+  return (
+    <div
+      className="message-item"
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+    >
+      {item.content}
+    </div>
+  );
+};
 export const MessageProvider: FC<{}> = (props) => {
   const { messageList, add, update, remove } = useStore("top");
   useEffect(() => {
@@ -41,7 +59,7 @@ export const MessageProvider: FC<{}> = (props) => {
                   timeout={1000}
                   classNames="message"
                 >
-                  <div className="message-item">{item.content}</div>
+                  <MessageItem onClose={remove} {...item}></MessageItem>
                 </CSSTransition>
               );
             })}
