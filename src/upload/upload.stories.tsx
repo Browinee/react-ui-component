@@ -2,7 +2,7 @@
 import { ComponentMeta } from "@storybook/react";
 import { useRef } from "react";
 import { Button } from "antd";
-import { UploadOutlined } from "@ant-design/icons";
+import { UploadOutlined, InboxOutlined } from "@ant-design/icons";
 import Upload, { UploadProps } from "./Upload";
 
 export default {
@@ -36,6 +36,17 @@ export const Basic = () => {
   return (
     <Upload {...props}>
       <Button icon={<UploadOutlined />}>Click to Upload</Button>
+    </Upload>
+  );
+};
+
+export const DragUpload = () => {
+  return (
+    <Upload {...props} drag>
+      <p>
+        <InboxOutlined style={{ fontSize: "50px" }} />
+      </p>
+      <p>點擊或將文件拖曳到此</p>
     </Upload>
   );
 };

@@ -3,7 +3,7 @@ import axios from "axios";
 
 import "./upload.scss";
 import UploadList, { UploadFile } from "./UploadList";
-
+import Dragger from "./Dragger";
 export interface UploadProps extends PropsWithChildren {
   action: string;
   headers?: Record<string, any>;
@@ -18,6 +18,7 @@ export interface UploadProps extends PropsWithChildren {
   onError?: (err: any, file: File) => void;
   onChange?: (file: File) => void;
   onRemove?: (file: UploadFile) => void;
+  drag: boolean;
 }
 
 export const Upload: FC<UploadProps> = (props) => {
@@ -36,6 +37,7 @@ export const Upload: FC<UploadProps> = (props) => {
     onError,
     onChange,
     onRemove,
+    drag,
   } = props;
 
   const fileInput = useRef<HTMLInputElement>(null);
@@ -83,7 +85,7 @@ export const Upload: FC<UploadProps> = (props) => {
   };
 
   const uploadFiles = (files: FileList) => {
-    let postFiles = Array.from(files);
+    const postFiles = Array.from(files);
     postFiles.forEach((file) => {
       if (!beforeUpload) {
         post(file);
@@ -156,7 +158,18 @@ export const Upload: FC<UploadProps> = (props) => {
   return (
     <div className="upload-component">
       <div className="upload-input" onClick={handleClick}>
-        {children}
+        {drag ? (
+          <Dragger
+            onFile={(files: FileList) => {
+              uploadFiles(files);
+            }}
+          >
+            {children}
+          </Dragger>
+        ) : (
+          children
+        )}
+
         <input
           className="upload-file-input"
           type="file"
