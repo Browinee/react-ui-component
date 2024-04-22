@@ -1,16 +1,53 @@
 import React, { CSSProperties, useEffect, useState } from "react";
 import { getMaskStyle } from "./getMaskStyle";
 
+import "./Mask.scss";
+
 interface MaskProps {
   element: HTMLElement;
+
   container?: HTMLElement;
+
   renderMaskContent?: (wrapper: React.ReactNode) => React.ReactNode;
+
+  onAnimationStart?: () => void;
+
+  onAnimationEnd?: () => void;
 }
 
 export const Mask: React.FC<MaskProps> = (props) => {
-  const { element, renderMaskContent, container } = props;
+  const {
+    element,
+    renderMaskContent,
+    container,
+    onAnimationStart,
+    onAnimationEnd,
+  } = props;
+
+  useEffect(() => {
+    onAnimationStart?.();
+    const timer = setTimeout(() => {
+      onAnimationEnd?.();
+    }, 200);
+
+    return () => {
+      window.clearTimeout(timer);
+    };
+  }, [element]);
 
   const [style, setStyle] = useState<CSSProperties>({});
+
+  useEffect(() => {
+    const observer = new ResizeObserver(() => {
+      const style = getMaskStyle(
+        element,
+        container || document.documentElement
+      );
+
+      setStyle(style);
+    });
+    observer.observe(container || document.documentElement);
+  }, []);
 
   useEffect(() => {
     if (!element) {
@@ -41,6 +78,7 @@ export const Mask: React.FC<MaskProps> = (props) => {
 
   return (
     <div style={style} className="mask">
+      <p>hi</p>
       {getContent()}
     </div>
   );
